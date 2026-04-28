@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: AssetTrackApi
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/assettrack}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: ${JWT_SECRET:my_32_character_mega_secret_word}
