@@ -19,6 +19,7 @@ public class JwtService {
     public String generateToken(User user) {
         return Jwts.builder()
             .subject(user.getEmail())
+            .claim("userId", user.getId().toString())
             .claim("role", user.getRole().name())
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
@@ -26,13 +27,22 @@ public class JwtService {
             .compact();
     }
 
-    public String extractUsername (String token) {
+    public String extractUsername(String token) {
         return Jwts.parser()
             .verifyWith(getKey())
             .build()
             .parseSignedClaims(token)
             .getPayload()
             .getSubject();
+    }
+
+    public String extractUserId(String token) {
+        return Jwts.parser()
+            .verifyWith(getKey())
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .get("userId", String.class);
     }
 
     private SecretKey getKey() {

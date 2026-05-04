@@ -37,4 +37,7 @@ public class MaintenanceOrder {
     private String description;
 
     private  String notes;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

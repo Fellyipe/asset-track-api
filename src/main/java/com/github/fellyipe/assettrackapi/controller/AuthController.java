@@ -3,6 +3,8 @@ package com.github.fellyipe.assettrackapi.controller;
 import com.github.fellyipe.assettrackapi.domain.model.User;
 import com.github.fellyipe.assettrackapi.domain.repository.UserRepository;
 import com.github.fellyipe.assettrackapi.dto.LoginDTO;
+import com.github.fellyipe.assettrackapi.dto.LoginResponseDTO;
+import com.github.fellyipe.assettrackapi.dto.SignUpDTO;
 import com.github.fellyipe.assettrackapi.security.JwtService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +28,8 @@ public class AuthController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Valid LoginDTO dto) {
+    @PostMapping("/signup")
+    public ResponseEntity<String> signUp(@RequestBody @Valid SignUpDTO dto) {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 dto.email(),
@@ -42,6 +44,25 @@ public class AuthController {
         String token = jwtService.generateToken(user);
 
         return ResponseEntity.ok(token);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginDTO dto) {
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                dto.email(),
+                dto.password()
+            )
+        );
+
+        User user = userRepository.findByEmail(dto.email())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+        String token = jwtService.generateToken(user);
+
+
+        return ResponseEntity.ok(new LoginResponseDTO(token, user));
     }
 
     @GetMapping("/test")
